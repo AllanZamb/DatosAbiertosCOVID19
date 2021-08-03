@@ -135,6 +135,7 @@ recodifica_variables <- function(x){
                                "11" = "SEMAR",
                                "12" = "SSA",
                                "13" ="UNIVERSITARIO",
+                               "14" = "NO ESPECIFICADO",
                                "99" = "NO ESPECIFICADO"),
                SEXO = recode(SEXO,
                              "1" = "MUJER",
