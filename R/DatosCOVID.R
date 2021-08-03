@@ -16,7 +16,6 @@ DatosCOVID19 <- function() {
     recodifica_variables(.)
 
   print("Hello, datos!")
-
 }
 
 
