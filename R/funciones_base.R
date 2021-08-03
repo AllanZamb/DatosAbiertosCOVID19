@@ -12,8 +12,8 @@ base_covid <-function(){
   datos_covid <- read.csv(descargar_datos_abiertos(),
                           encoding = "UTF-8",
                           stringsAsFactors = T ) %>%
-    funcion_base (.) %>%
-    funcion_municipios (.)
+    recodifica_variables (.) %>%
+    recodifica_poblaciones (.)
   return(datos_covid)
 }
 
@@ -105,7 +105,7 @@ descargar_datos_abiertos <- function(){
 
 # FUNCION 2 : RECODIFICA LA BASE
 
-funcion_base <- function(x){
+recodifica_variables <- function(x){
   x %>% mutate(FECHA_INGRESO = as.Date(FECHA_INGRESO, format = "%Y-%m-%d"),
                FECHA_ACTUALIZACION = as.Date(FECHA_ACTUALIZACION, format = "%Y-%m-%d"),
                FECHA_DEF = as.Date(FECHA_DEF, format = "%Y-%m-%d"),
@@ -153,7 +153,8 @@ funcion_base <- function(x){
                                              EDAD >= 40  & EDAD <= 49 ~ '40 - 49',
                                              EDAD >= 30  & EDAD <= 39 ~ '30 - 39',
                                              EDAD >= 20  & EDAD <= 29 ~ '20 - 29',
-                                             EDAD < 20 ~ '<20')),
+                                             EDAD >= 10  & EDAD <= 19 ~ '10 - 19',
+                                             EDAD < 9 ~ '<9')),
 
                INTUBADO = funcion_recodificar_si_no(INTUBADO),
 
@@ -208,7 +209,7 @@ funcion_base <- function(x){
                                             "1" = "CONFIRMADO POR ASOCIACION CLINICA",
                                             "2" = "CONFIRMADO POR DICTAMINACION",
                                             "3" = "POSITIVO A SARS-COV-2",
-                                            "4" = "INV?LIDO POR LABORATORIO",
+                                            "4" = "INVALIDO POR LABORATORIO",
                                             "5" = "NO REALIZADO POR LABORATORIO",
                                             "6" = "SOSPECHOSO",
                                             "7" = "NEGATIVO A SARS-COV-2") )
@@ -286,7 +287,7 @@ funcion_recodificar_resultado <- function(x){
 
 # Con esta funcición recodificamos la variables de los municipios por nombre
 #Realizamos la carga del catálogo y mediante left_join unimos la tabla, creando las nuevas variables.
-funcion_municipios <- function(x){
+recodifica_poblaciones <- function(x){
   poblaciones <- read.csv("POBLACIONES.csv") %>%
     rename(ENTIDAD_RES = 1)
 
@@ -297,7 +298,6 @@ funcion_municipios <- function(x){
                                     "CLAVE_ENTIDAD"="CLAVE_ENTIDAD")) %>%
     left_join( x,  ., by= c("ENTIDAD_RES"="ENTIDAD",
                             "MUNICIPIO_RES"="CLAVE_MUNICIPIO"))
-
 }
 
 
