@@ -14,8 +14,7 @@ DatosCOVID19 <- function() {
                           encoding = "UTF-8",
                           stringsAsFactors = T ) %>%
     recodifica_variables(.)
-
-  print("Hello, datos!")
+  return(datos_covid)
 }
 
 
