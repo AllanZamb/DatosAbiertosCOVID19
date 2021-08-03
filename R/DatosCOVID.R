@@ -13,5 +13,3 @@ DatosCOVID19 <- function() {
   return(datos_covid)
 }
 
-
-#DatosAbiertosCOVID19::DatosCOVID19()
