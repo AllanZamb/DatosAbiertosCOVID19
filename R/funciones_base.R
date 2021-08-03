@@ -7,114 +7,123 @@ base_covid <-function(){
   library(readxl)
   library(tidyverse)
   library(RCurl)
-  
+
   source("funciones_base.R")
-  datos_covid <- read.csv(descargar_datos_abiertos(), 
-                          encoding = "UTF-8", 
+  datos_covid <- read.csv(descargar_datos_abiertos(),
+                          encoding = "UTF-8",
                           stringsAsFactors = T ) %>%
-    funcion_base (.) %>% 
+    funcion_base (.) %>%
     funcion_municipios (.)
   return(datos_covid)
 }
 
 # FUNCION 1 : DESCARGA LA BASE DE DATOS ABIERTOS
 
-#Con esta funcion nos aseguramos de siempre tener la versión del día o actualizada de la base de datos abiertos. 
+#Con esta funcion nos aseguramos de siempre tener la versión del día o actualizada de la base de datos abiertos.
 
 descargar_datos_abiertos <- function(){
   #Comporbamos si ya existe la base de datos de hoy... Sí ya la descargamos, no volvemos a descargarla
   #Pero si no la tenemos actualizada o no se encuentra, la descargamos
+
+
+  if (!dir.exists("datos_abiertos")){
+    dir.create("datos_abiertos")
+  } else {
+    print("Directorio existente, descargando base...")
+  }
+
+
   if (file.exists("datos_abiertos/COVID19MEXICO.csv") & Sys.Date() == as.Date(file.info("datos_abiertos/COVID19MEXICO.csv")$atime)){
     print("Ya tenemos la base de hoy, ¿Volvemos a descargar? S/N")
     rdl<-readline()
-    
+
     if (rdl %in% c("s","S","si", "SI")) {
       print("Descargando base...")
-      
+
       #Sí, ya le tenemos, pero la volvemos a actualizar...
-      download.file(url ="http://datosabiertos.salud.gob.mx/gobmx/salud/datos_abiertos/datos_abiertos_covid19.zip", 
+      download.file(url ="http://datosabiertos.salud.gob.mx/gobmx/salud/datos_abiertos/datos_abiertos_covid19.zip",
                     destfile='datos_abiertos/datos_abiertos_covid19.zip',
                     method='auto')
-      
+
       #Descomprimimos la carpeta
       if (Sys.info()["sysname"] == "Windows"){
-        
-        
-        datos_abiertos <- unzip('datos_abiertos/datos_abiertos_covid19.zip', 
+
+
+        datos_abiertos <- unzip('datos_abiertos/datos_abiertos_covid19.zip',
                                 exdir = "datos_abiertos",
                                 overwrite = TRUE)
       }else{
         #MAC
         #Descomprimimos la carpeta
-        datos_abiertos <- unzip('datos_abiertos/datos_abiertos_covid19.zip', 
+        datos_abiertos <- unzip('datos_abiertos/datos_abiertos_covid19.zip',
                                 exdir = "datos_abiertos/", overwrite = TRUE)
       }
-      
+
       #Eliminamos el zip
       file.remove("datos_abiertos/datos_abiertos_covid19.zip")
       file.rename(datos_abiertos, "datos_abiertos/COVID19MEXICO.csv")
       return("datos_abiertos/COVID19MEXICO.csv")
-      
+
     }else if (rdl %in% c("n","N","no", "NO")){
       #No, sólo carga la base que ya está descargada
       print("Cargando base...")
       return("datos_abiertos/COVID19MEXICO.csv")
     }
-    
+
   }else{
-    
+
     #No la tenemos, y descargamos los datos abiertos
     print("Desargando base...")
-    download.file(url ="http://datosabiertos.salud.gob.mx/gobmx/salud/datos_abiertos/datos_abiertos_covid19.zip", 
+    download.file(url ="http://datosabiertos.salud.gob.mx/gobmx/salud/datos_abiertos/datos_abiertos_covid19.zip",
                   destfile='datos_abiertos/datos_abiertos_covid19.zip',
                   method='auto')
-    
+
     #Descomprimimos la carpeta
     if (Sys.info()["sysname"] == "Windows"){
-      
-      
-      datos_abiertos <- unzip('datos_abiertos/datos_abiertos_covid19.zip', 
+
+
+      datos_abiertos <- unzip('datos_abiertos/datos_abiertos_covid19.zip',
                               exdir = "datos_abiertos",
                               overwrite = TRUE)
     }else{
       #MAC
       #Descomprimimos la carpeta
-      datos_abiertos <- unzip('datos_abiertos/datos_abiertos_covid19.zip', 
+      datos_abiertos <- unzip('datos_abiertos/datos_abiertos_covid19.zip',
                               exdir = "datos_abiertos/", overwrite = TRUE)
     }
-    
+
     #Eliminamos el zip
     file.remove("datos_abiertos/datos_abiertos_covid19.zip")
     file.rename(datos_abiertos, "datos_abiertos/COVID19MEXICO.csv")
     return("datos_abiertos/COVID19MEXICO.csv")
-    
+
   }
-  
-  
+
+
 }
 
 
 # FUNCION 2 : RECODIFICA LA BASE
 
 funcion_base <- function(x){
-  x %>% mutate(FECHA_INGRESO = as.Date(FECHA_INGRESO, format = "%Y-%m-%d"), 
-               FECHA_ACTUALIZACION = as.Date(FECHA_ACTUALIZACION, format = "%Y-%m-%d"), 
+  x %>% mutate(FECHA_INGRESO = as.Date(FECHA_INGRESO, format = "%Y-%m-%d"),
+               FECHA_ACTUALIZACION = as.Date(FECHA_ACTUALIZACION, format = "%Y-%m-%d"),
                FECHA_DEF = as.Date(FECHA_DEF, format = "%Y-%m-%d"),
                FECHA_SINTOMAS = as.Date(FECHA_SINTOMAS, format = "%Y-%m-%d"),
-               
-               ORIGEN = recode(ORIGEN, 
-                               "1" = "USMER", 
+
+               ORIGEN = recode(ORIGEN,
+                               "1" = "USMER",
                                "2" = "FUERA DE USMER"),
-               
+
                ENTIDAD_UM = funcion_recodificar (ENTIDAD_UM),
-               
+
                ENTIDAD_NAC = funcion_recodificar (ENTIDAD_NAC),
-               
+
                ENTIDAD_RES = funcion_recodificar(ENTIDAD_RES),
-               
-               SECTOR = recode(SECTOR, 
-                               "1" = "CRUZ ROJA", 
-                               "2" = "DIF", 
+
+               SECTOR = recode(SECTOR,
+                               "1" = "CRUZ ROJA",
+                               "2" = "DIF",
                                "3" = "ESTATAL",
                                "4" = "IMSS",
                                "5" = "IMSS-BIENESTAR",
@@ -127,16 +136,16 @@ funcion_base <- function(x){
                                "12" = "SSA",
                                "13" ="UNIVERSITARIO",
                                "99" = "NO ESPECIFICADO"),
-               SEXO = recode(SEXO, 
-                             "1" = "MUJER", 
-                             "2" = "HOMBRE", 
+               SEXO = recode(SEXO,
+                             "1" = "MUJER",
+                             "2" = "HOMBRE",
                              "3" = "NO ESPECIFICADO"),
-               
-               TIPO_PACIENTE = recode(TIPO_PACIENTE, 
-                                      "1" = "AMBULATORIO", 
+
+               TIPO_PACIENTE = recode(TIPO_PACIENTE,
+                                      "1" = "AMBULATORIO",
                                       "2" = "HOSPITALIZADO",
                                       "99" = "NO ESPECIFICADO"),
-               
+
                #Creamos la variable para grupos de edad
                GRUPO_EDAD = factor(case_when(EDAD > 69 ~ '>70',
                                              EDAD >= 60  & EDAD <= 69 ~ '60 - 69',
@@ -145,64 +154,64 @@ funcion_base <- function(x){
                                              EDAD >= 30  & EDAD <= 39 ~ '30 - 39',
                                              EDAD >= 20  & EDAD <= 29 ~ '20 - 29',
                                              EDAD < 20 ~ '<20')),
-               
+
                INTUBADO = funcion_recodificar_si_no(INTUBADO),
-               
+
                NEUMONIA = funcion_recodificar_si_no(NEUMONIA),
-               
+
                UCI = funcion_recodificar_si_no(UCI),
-               
-               NACIONALIDAD = recode(NACIONALIDAD, 
-                                     "1" = "MEXICANA", 
+
+               NACIONALIDAD = recode(NACIONALIDAD,
+                                     "1" = "MEXICANA",
                                      "2" = "EXTRANJERA",
                                      "99" = "NO ESPECIFICADO"),
-               
+
                INDIGENA = funcion_recodificar_si_no(INDIGENA),
-               
+
                MIGRANTE = funcion_recodificar_si_no(MIGRANTE),
-               
+
                HABLA_LENGUA_INDIG = funcion_recodificar_si_no(HABLA_LENGUA_INDIG),
-               
+
                EMBARAZO = funcion_recodificar_si_no(EMBARAZO),
-               
+
                DIABETES = funcion_recodificar_si_no(DIABETES),
-               
+
                EPOC = funcion_recodificar_si_no(EPOC),
-               
+
                ASMA = funcion_recodificar_si_no(ASMA),
-               
+
                INMUSUPR = funcion_recodificar_si_no(INMUSUPR),
-               
+
                HIPERTENSION = funcion_recodificar_si_no(HIPERTENSION),
-               
+
                OTRA_COM = funcion_recodificar_si_no(OTRA_COM),
-               
+
                CARDIOVASCULAR = funcion_recodificar_si_no(CARDIOVASCULAR),
-               
+
                OBESIDAD = funcion_recodificar_si_no(OBESIDAD),
-               
+
                TABAQUISMO = funcion_recodificar_si_no(TABAQUISMO),
-               
+
                RENAL_CRONICA = funcion_recodificar_si_no(RENAL_CRONICA),
-               
+
                OTRO_CASO = funcion_recodificar_si_no(OTRO_CASO),
-               
+
                TOMA_MUESTRA_ANTIGENO = funcion_recodificar_si_no(TOMA_MUESTRA_ANTIGENO),
-               
+
                TOMA_MUESTRA_LAB = funcion_recodificar_si_no(TOMA_MUESTRA_LAB),
-               
+
                RESULTADO_LAB = funcion_recodificar_resultado(RESULTADO_LAB),
-               
+
                RESULTADO_ANTIGENO = funcion_recodificar_resultado(RESULTADO_ANTIGENO),
-               
-               CLASIFICACION_FINAL = recode(CLASIFICACION_FINAL, 
-                                            "1" = "CONFIRMADO POR ASOCIACION CLINICA", 
+
+               CLASIFICACION_FINAL = recode(CLASIFICACION_FINAL,
+                                            "1" = "CONFIRMADO POR ASOCIACION CLINICA",
                                             "2" = "CONFIRMADO POR DICTAMINACION",
-                                            "3" = "POSITIVO A SARS-COV-2", 
+                                            "3" = "POSITIVO A SARS-COV-2",
                                             "4" = "INV?LIDO POR LABORATORIO",
                                             "5" = "NO REALIZADO POR LABORATORIO",
                                             "6" = "SOSPECHOSO",
-                                            "7" = "NEGATIVO A SARS-COV-2") )  
+                                            "7" = "NEGATIVO A SARS-COV-2") )
 }
 
 
@@ -253,7 +262,7 @@ funcion_recodificar <- function(x){
 
 funcion_recodificar_si_no <- function(x){
   recode(x,
-         "1" = "SI", 
+         "1" = "SI",
          "2" = "NO",
          "97" = "NO APLICA",
          "98" = "SE IGNORA",
@@ -264,10 +273,10 @@ funcion_recodificar_si_no <- function(x){
 # FUNCION 5 : RECODIFICA LA VARIABLE RESULTADO
 
 funcion_recodificar_resultado <- function(x){
-  recode(x, 
-         "1" = "POSITIVO A SARS-COV-2", 
+  recode(x,
+         "1" = "POSITIVO A SARS-COV-2",
          "2" = "NO POSITIVO A SARS-COV-2",
-         "3" = "RESULTADO PENDIENTE", 
+         "3" = "RESULTADO PENDIENTE",
          "4" = "RESULTADO NO ADECUADO",
          "97" = "NO APLICA (CASO SIN MUESTRA)")
 }
@@ -278,17 +287,17 @@ funcion_recodificar_resultado <- function(x){
 # Con esta funcición recodificamos la variables de los municipios por nombre
 #Realizamos la carga del catálogo y mediante left_join unimos la tabla, creando las nuevas variables.
 funcion_municipios <- function(x){
-  poblaciones <- read.csv("POBLACIONES.csv") %>% 
+  poblaciones <- read.csv("POBLACIONES.csv") %>%
     rename(ENTIDAD_RES = 1)
-  
+
   catalogo_municipios <- read_excel("CATALOGO_MUNICIPIOS.xlsx",sheet = 1) %>%
     mutate(CLAVE_MUNICIPIO = as.integer(CLAVE_MUNICIPIO),
-           CLAVE_ENTIDAD = as.integer(CLAVE_ENTIDAD)) %>% 
-    left_join(.,poblaciones, by = c("CLAVE_MUNICIPIO"="MUNICIPIO_RES", 
+           CLAVE_ENTIDAD = as.integer(CLAVE_ENTIDAD)) %>%
+    left_join(.,poblaciones, by = c("CLAVE_MUNICIPIO"="MUNICIPIO_RES",
                                     "CLAVE_ENTIDAD"="CLAVE_ENTIDAD")) %>%
-    left_join( x,  ., by= c("ENTIDAD_RES"="ENTIDAD", 
-                            "MUNICIPIO_RES"="CLAVE_MUNICIPIO"))  
-    
+    left_join( x,  ., by= c("ENTIDAD_RES"="ENTIDAD",
+                            "MUNICIPIO_RES"="CLAVE_MUNICIPIO"))
+
 }
 
 
@@ -300,9 +309,9 @@ library(scales)
 
 # Casos positivos, negativos y sospechosos
 graficar_caso <- function(x, y, z, f){
-  
+
   ggplot(x, aes(x= f, y= count, col = GRUPO_EDAD))+
-    labs(title = paste("Casos",y,"por grupos de edad en", z), 
+    labs(title = paste("Casos",y,"por grupos de edad en", z),
          #subtitle = "?? ",
          x = "Fecha",
          y = paste("Numero de",y," por dia"),
@@ -315,12 +324,12 @@ graficar_caso <- function(x, y, z, f){
     theme(legend.key = element_rect(fill = "white"))+
     #scale_y_continuous(labels=dollar_format(prefix="$")) +
     geom_vline(xintercept = as.numeric(as.Date(c("2020-12-24"))), linetype="dashed")+
-    # geom_text(aes(x=as.Date("2020-12-24"), 
-    #               label="Inicio de vacunacion", 100), 
-    #           colour="Black", angle=90, vjust = -0.7,size = 3)+ 
+    # geom_text(aes(x=as.Date("2020-12-24"),
+    #               label="Inicio de vacunacion", 100),
+    #           colour="Black", angle=90, vjust = -0.7,size = 3)+
     scale_x_date(labels=date_format("%d-%b-%y"),
                  date_breaks = "1 month") +
     theme(axis.text.x = element_text(angle=45, hjust = 1))
   # theme_elegante()
-  
+
 }
