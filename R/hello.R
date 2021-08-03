@@ -17,3 +17,7 @@ hello <- function() {
   print("Hello, world!")
 }
 
+DatosCOVID19 <- function() {
+  print("Hello, datos!")
+}
+
