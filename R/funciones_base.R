@@ -289,10 +289,11 @@ funcion_recodificar_resultado <- function(x){
 # Con esta funcición recodificamos la variables de los municipios por nombre
 #Realizamos la carga del catálogo y mediante left_join unimos la tabla, creando las nuevas variables.
 recodifica_poblaciones <- function(x){
-  poblaciones <- read.csv("POBLACIONES.csv") %>%
+  poblaciones <- read.csv("https://github.com/AllanZamb/DatosAbiertosCOVID19/blob/main/POBLACIONES_ENTIDADES_2021.csv") %>%
     rename(ENTIDAD_RES = 1)
 
-  catalogo_municipios <- read_excel("CATALOGO_MUNICIPIOS.xlsx",sheet = 1) %>%
+  #catalogo_municipios <- read_excel("CATALOGO_MUNICIPIOS.xlsx",sheet = 1) %>%
+  catalogo_municipios <- read.csv("https://github.com/AllanZamb/DatosAbiertosCOVID19/blob/main/POBLACIONES_MUNICIPIOS_2021.csv",sheet = 1) %>%
     mutate(CLAVE_MUNICIPIO = as.integer(CLAVE_MUNICIPIO),
            CLAVE_ENTIDAD = as.integer(CLAVE_ENTIDAD)) %>%
     left_join(.,poblaciones, by = c("CLAVE_MUNICIPIO"="MUNICIPIO_RES",
@@ -301,36 +302,3 @@ recodifica_poblaciones <- function(x){
                             "MUNICIPIO_RES"="CLAVE_MUNICIPIO"))
 }
 
-
-
-# FUNCION 7 : GRAFICA CASOS POPSITIVOS, NEGATIVOS, SOSPECHOSOS Y DEFUNCIONES
-
-#source("src/tema.R")
-library(scales)
-
-# Casos positivos, negativos y sospechosos
-graficar_caso <- function(x, y, z, f){
-
-  ggplot(x, aes(x= f, y= count, col = GRUPO_EDAD))+
-    labs(title = paste("Casos",y,"por grupos de edad en", z),
-         #subtitle = "?? ",
-         x = "Fecha",
-         y = paste("Numero de",y," por dia"),
-         caption = "https://www.gob.mx/salud/documentos/datos-abiertos" ) +
-    #scale_color_manual(values=c('#25AAE2','#F2B53A','#8BC540',"red","blue", "green", "yellow")) +
-    guides(colour = guide_legend(override.aes = list(size=10))) +
-    #geom_line(span = 4, se=FALSE)+
-    geom_bar(aes(x = f, fill = GRUPO_EDAD, y = count  ), position="stack", stat="identity")+
-    #geom_smooth(alpha = 0.2, size = 1.5, span = 4, se=FALSE) +
-    theme(legend.key = element_rect(fill = "white"))+
-    #scale_y_continuous(labels=dollar_format(prefix="$")) +
-    geom_vline(xintercept = as.numeric(as.Date(c("2020-12-24"))), linetype="dashed")+
-    # geom_text(aes(x=as.Date("2020-12-24"),
-    #               label="Inicio de vacunacion", 100),
-    #           colour="Black", angle=90, vjust = -0.7,size = 3)+
-    scale_x_date(labels=date_format("%d-%b-%y"),
-                 date_breaks = "1 month") +
-    theme(axis.text.x = element_text(angle=45, hjust = 1))
-  # theme_elegante()
-
-}
