@@ -10,6 +10,8 @@ DatosCOVID19 <- function() {
                           encoding = "UTF-8",
                           stringsAsFactors = T ) %>%
     recodifica_variables(.) %>%
+    recodifica_poblaciones(.)
+
 
   return(datos_covid)
 }
