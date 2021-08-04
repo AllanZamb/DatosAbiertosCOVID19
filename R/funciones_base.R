@@ -289,11 +289,11 @@ funcion_recodificar_resultado <- function(x){
 # Con esta funcición recodificamos la variables de los municipios por nombre
 #Realizamos la carga del catálogo y mediante left_join unimos la tabla, creando las nuevas variables.
 recodifica_poblaciones <- function(x){
-  poblaciones <- read.csv("https://github.com/AllanZamb/DatosAbiertosCOVID19/blob/main/poblaciones/POBLACIONES_ENTIDADES_2021.csv") %>%
+  poblaciones <- read.csv("https://raw.githubusercontent.com/AllanZamb/DatosAbiertosCOVID19/main/poblaciones/POBLACIONES_ENTIDADES_2021.csv") %>%
     rename(ENTIDAD_RES = 1)
 
   #catalogo_municipios <- read_excel("CATALOGO_MUNICIPIOS.xlsx",sheet = 1) %>%
-  catalogo_municipios <- read.csv("https://github.com/AllanZamb/DatosAbiertosCOVID19/blob/main/poblaciones/POBLACIONES_MUNICIPIOS_2021.csv",sheet = 1) %>%
+  catalogo_municipios <- read.csv("https://raw.githubusercontent.com/AllanZamb/DatosAbiertosCOVID19/main/poblaciones/POBLACIONES_MUNICIPIOS_2021.csv") %>%
     mutate(CLAVE_MUNICIPIO = as.integer(CLAVE_MUNICIPIO),
            CLAVE_ENTIDAD = as.integer(CLAVE_ENTIDAD)) %>%
     left_join(.,poblaciones, by = c("CLAVE_MUNICIPIO"="MUNICIPIO_RES",
