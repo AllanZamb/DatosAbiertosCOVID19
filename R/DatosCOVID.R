@@ -9,7 +9,8 @@ DatosCOVID19 <- function() {
   datos_covid <- read.csv(descargar_datos_abiertos(),
                           encoding = "UTF-8",
                           stringsAsFactors = T ) %>%
-    recodifica_variables(.)
+    recodifica_variables(.) %>%
+
   return(datos_covid)
 }
 
