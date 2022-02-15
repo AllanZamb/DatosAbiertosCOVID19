@@ -7,11 +7,13 @@ base_covid <-function(){
   library(readxl)
   library(tidyverse)
   library(RCurl)
+  library(data.table)
 
   source("funciones_base.R")
-  datos_covid <- read.csv(descargar_datos_abiertos(),
-                          encoding = "UTF-8",
-                          stringsAsFactors = T ) %>%
+  # datos_covid <- read.csv(descargar_datos_abiertos(),
+  #                         encoding = "UTF-8",
+  #                         stringsAsFactors = T ) %>%
+  datos_covid <- fread("curl http://datosabiertos.salud.gob.mx/gobmx/salud/datos_abiertos/datos_abiertos_covid19.zip | funzip") %>%
     recodifica_variables (.) %>%
     recodifica_poblaciones (.)
   return(datos_covid)
@@ -43,7 +45,7 @@ descargar_datos_abiertos <- function(){
       #Sí, ya le tenemos, pero la volvemos a actualizar...
       download.file(url ="http://datosabiertos.salud.gob.mx/gobmx/salud/datos_abiertos/datos_abiertos_covid19.zip",
                     destfile='datos_abiertos/datos_abiertos_covid19.zip',
-                    method='auto')
+                    method='libcurl')
 
       #Descomprimimos la carpeta
       if (Sys.info()["sysname"] == "Windows"){
