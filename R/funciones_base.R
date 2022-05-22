@@ -218,6 +218,115 @@ recodifica_variables <- function(x){
                                             "7" = "NEGATIVO A SARS-COV-2") )
 }
 
+recodifica_variables <- function(datos_covid, poblaciones){
+  datos_covid <-datos_covid %>% mutate(
+    FECHA_INGRESO = as.Date(FECHA_INGRESO, format = "%Y-%m-%d"),
+    FECHA_ACTUALIZACION = as.Date(FECHA_ACTUALIZACION, format = "%Y-%m-%d"),
+
+
+    ##### DATOS DEL PACIENTE ####
+    FECHA_DEF = as.Date(FECHA_DEF, format = "%Y-%m-%d"),
+    FECHA_SINTOMAS = as.Date(FECHA_SINTOMAS, format = "%Y-%m-%d"),
+
+
+    # ENTIDAD_NAC = funcion_recodificar (ENTIDAD_NAC),
+    #
+    # ENTIDAD_RES = funcion_recodificar(ENTIDAD_RES),
+
+
+    SEXO = recode(SEXO,
+                  "1" = "MUJER",
+                  "2" = "HOMBRE",
+                  "3" = "NO ESPECIFICADO"),
+
+    EDAD = as.numeric(EDAD),
+
+
+
+    #Creamos la variable para grupos de edad
+    GRUPO_EDAD = factor(case_when(EDAD > 69 ~ '>70',
+                                  EDAD >= 60  & EDAD <= 69 ~ '60 - 69',
+                                  EDAD >= 50  & EDAD <= 59 ~ '50 - 59',
+                                  EDAD >= 40  & EDAD <= 49 ~ '40 - 49',
+                                  EDAD >= 30  & EDAD <= 39 ~ '30 - 39',
+                                  EDAD >= 20  & EDAD <= 29 ~ '20 - 29',
+                                  EDAD >= 10  & EDAD <= 19 ~ '10 - 19',
+                                  EDAD < 9 ~ '<9')),
+
+
+
+    CLASIFICACION_FINAL = recode(CLASIFICACION_FINAL,
+                                 "1" = "CONFIRMADO POR ASOCIACION CLINICA",
+                                 "2" = "CONFIRMADO POR DICTAMINACION",
+                                 "3" = "POSITIVO A SARS-COV-2",
+                                 "4" = "INVALIDO POR LABORATORIO",
+                                 "5" = "NO REALIZADO POR LABORATORIO",
+                                 "6" = "SOSPECHOSO",
+                                 "7" = "NEGATIVO A SARS-COV-2") )
+
+  if(poblaciones == 1){
+
+    poblaciones <-read.csv("https://raw.githubusercontent.com/AllanZamb/DatosAbiertosCOVID19/main/poblaciones/Poblaciones_INE_Muni.csv", encoding = "UTF-8")
+
+
+    datos_covid_ <- datos_covid %>%
+      left_join(., poblaciones , by = c("ENTIDAD_RES" = "CVE_ENT" ,
+                                        "MUNICIPIO_RES" = "CVE_MUN")) %>%
+      left_join(., poblaciones %>%
+                  select(CVE_ENT, NACIMIENTO=DESC_ENT) %>%
+                  filter(!duplicated(.)) , by = c("ENTIDAD_NAC"= "CVE_ENT" )) %>%
+      select(-ENTIDAD_NAC, -ENTIDAD_RES, -MUNICIPIO_RES) %>%
+      rename(ENTIDAD_RES=DESC_ENT, MUNICIPIO_RES=DESC_MUN, ENTIDAD_NAC = NACIMIENTO, POB_MUNI_RES=POBTOT ) %>%
+
+      left_join(., poblaciones %>%
+                  group_by(DESC_ENT ) %>%
+                  summarise(POB_ENT_RES = sum(POBTOT)), by = c("ENTIDAD_RES"= "DESC_ENT"))
+
+    return(datos_covid_)
+
+
+  }else if (poblaciones == 2){
+
+    poblaciones <-read.csv("https://raw.githubusercontent.com/AllanZamb/DatosAbiertosCOVID19/main/poblaciones/Poblaciones_INE_Muni.csv", encoding = "UTF-8")
+
+
+    datos_covid_ <- datos_covid %>%
+      left_join(., poblaciones , by = c("ENTIDAD_RES" = "CVE_ENT" ,
+                                        "MUNICIPIO_RES" = "CVE_MUN")) %>%
+      left_join(., poblaciones %>%
+                  select(CVE_ENT, NACIMIENTO=DESC_ENT) %>%
+                  filter(!duplicated(.)) , by = c("ENTIDAD_NAC"= "CVE_ENT" )) %>%
+      select(-ENTIDAD_NAC, -ENTIDAD_RES, -MUNICIPIO_RES) %>%
+      rename(ENTIDAD_RES=DESC_ENT, MUNICIPIO_RES=DESC_MUN, ENTIDAD_NAC = NACIMIENTO, POB_MUNI_RES=POBTOT ) %>%
+
+      left_join(., poblaciones %>%
+                  group_by(DESC_ENT ) %>%
+                  summarise(POB_ENT_RES = sum(POBTOT)), by = c("ENTIDAD_RES"= "DESC_ENT")) %>%
+      select(-POB_MUNI_RES)
+
+    return(datos_covid_)
+
+
+  }else{
+
+    poblaciones_INE <-read.csv("https://raw.githubusercontent.com/AllanZamb/DatosAbiertosCOVID19/main/poblaciones/Poblaciones_INE_Muni.csv", encoding = "UTF-8")
+
+
+    datos_covid_ <- datos_covid %>%
+      left_join(., poblaciones_INE , by = c("ENTIDAD_RES" = "CVE_ENT" ,
+                                            "MUNICIPIO_RES" = "CVE_MUN")) %>%
+
+      left_join(., poblaciones_INE %>%
+                  select(CVE_ENT, NACIMIENTO=DESC_ENT) %>%
+                  filter(!duplicated(.)) , by = c("ENTIDAD_NAC"= "CVE_ENT" )) %>%
+
+
+      select(-ENTIDAD_NAC, -ENTIDAD_RES, -MUNICIPIO_RES, -POBTOT) %>%
+      rename(ENTIDAD_RES=DESC_ENT, MUNICIPIO_RES=DESC_MUN, ENTIDAD_NAC = NACIMIENTO)
+
+
+  }
+}
 
 # FUNCION 3 : RECODIFICA LA VARIABLE ESTADOS
 
