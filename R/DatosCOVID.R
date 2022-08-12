@@ -9,7 +9,7 @@ DatosCOVID19 <- function(RESULTADO_FINAL= T,
                          LABORATORIO = F,
                          SOCIO_CULT_DEMO = F,
                          POBLACIONES = F
-                         ){
+){
 
 
   if(isTRUE(RESULTADO_FINAL)){
@@ -95,4 +95,3 @@ DatosCOVID19 <- function(RESULTADO_FINAL= T,
   return(datos_covid)
 
 }
-

@@ -142,7 +142,7 @@ recodifica_variables <- function(x){
                SEXO = recode(SEXO,
                              "1" = "MUJER",
                              "2" = "HOMBRE",
-                             "3" = "NO ESPECIFICADO"),
+                             "99" = "NO ESPECIFICADO"),
 
                TIPO_PACIENTE = recode(TIPO_PACIENTE,
                                       "1" = "AMBULATORIO",
