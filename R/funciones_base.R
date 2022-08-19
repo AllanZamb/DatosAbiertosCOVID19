@@ -242,7 +242,7 @@ recodifica_variables <- function(datos_covid, poblaciones){
     SEXO = recode(SEXO,
                   "1" = "MUJER",
                   "2" = "HOMBRE",
-                  "3" = "NO ESPECIFICADO"),
+                  "99" = "NO ESPECIFICADO"),
 
     EDAD = as.numeric(EDAD),
 
@@ -257,6 +257,55 @@ recodifica_variables <- function(datos_covid, poblaciones){
                                   EDAD >= 20  & EDAD <= 29 ~ '20 - 29',
                                   EDAD >= 10  & EDAD <= 19 ~ '10 - 19',
                                   EDAD < 9 ~ '<9')),
+
+    INTUBADO = funcion_recodificar_si_no(INTUBADO),
+
+    # NEUMONIA = funcion_recodificar_si_no(NEUMONIA),
+    #
+    # UCI = funcion_recodificar_si_no(UCI),
+    #
+    # NACIONALIDAD = recode(NACIONALIDAD,
+    #                       "1" = "MEXICANA",
+    #                       "2" = "EXTRANJERA",
+    #                       "99" = "NO ESPECIFICADO"),
+    #
+    # INDIGENA = funcion_recodificar_si_no(INDIGENA),
+    #
+    # MIGRANTE = funcion_recodificar_si_no(MIGRANTE),
+    #
+    # HABLA_LENGUA_INDIG = funcion_recodificar_si_no(HABLA_LENGUA_INDIG),
+    #
+    # EMBARAZO = funcion_recodificar_si_no(EMBARAZO),
+    #
+    # DIABETES = funcion_recodificar_si_no(DIABETES),
+    #
+    # EPOC = funcion_recodificar_si_no(EPOC),
+    #
+    # ASMA = funcion_recodificar_si_no(ASMA),
+    #
+    # INMUSUPR = funcion_recodificar_si_no(INMUSUPR),
+    #
+    # HIPERTENSION = funcion_recodificar_si_no(HIPERTENSION),
+    #
+    # OTRA_COM = funcion_recodificar_si_no(OTRA_COM),
+    #
+    # CARDIOVASCULAR = funcion_recodificar_si_no(CARDIOVASCULAR),
+    #
+    # OBESIDAD = funcion_recodificar_si_no(OBESIDAD),
+    #
+    # TABAQUISMO = funcion_recodificar_si_no(TABAQUISMO),
+    #
+    # RENAL_CRONICA = funcion_recodificar_si_no(RENAL_CRONICA),
+    #
+    # OTRO_CASO = funcion_recodificar_si_no(OTRO_CASO),
+    #
+    # TOMA_MUESTRA_ANTIGENO = funcion_recodificar_si_no(TOMA_MUESTRA_ANTIGENO),
+    #
+    # TOMA_MUESTRA_LAB = funcion_recodificar_si_no(TOMA_MUESTRA_LAB),
+    #
+    # RESULTADO_LAB = funcion_recodificar_resultado(RESULTADO_LAB),
+    #
+    # RESULTADO_ANTIGENO = funcion_recodificar_resultado(RESULTADO_ANTIGENO),
 
 
 
