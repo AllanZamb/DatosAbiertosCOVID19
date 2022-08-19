@@ -35,11 +35,6 @@ DatosCOVID19 <- function(RESULTADO_FINAL= T,
                                      "INTUBADO",
                                      "NEUMONIA"  ))}
 
-  if (isTRUE(COMPLICACION)) {
-    variables <- append(variables, c("TIPO_PACIENTE",
-                                     "UCI",
-                                     "INTUBADO",
-                                     "NEUMONIA"  ))}
 
   if (isTRUE(COMORBILIDADES)) {
     variables <- append(variables, c("EMBARAZO",
@@ -78,7 +73,11 @@ DatosCOVID19 <- function(RESULTADO_FINAL= T,
     poblaciones <- F
   }
 
-
+  vars <- c(UM,
+  COMPLICACION,
+  COMORBILIDADES,
+  LABORATORIO,
+  SOCIO_CULT_DEMO)
 
 
 
@@ -92,7 +91,7 @@ DatosCOVID19 <- function(RESULTADO_FINAL= T,
 
   datos_covid <- data.table::fread(descargar_datos_abiertos(),
                                    select =variables ) %>%
-    recodifica_variables(., poblaciones)
+    recodifica_variables(., poblaciones, vars)
 
 
 

@@ -223,7 +223,15 @@ recodifica_variables <- function(x){
                                             "7" = "NEGATIVO A SARS-COV-2") )
 }
 
-recodifica_variables <- function(datos_covid, poblaciones){
+recodifica_variables <- function(datos_covid, poblaciones, vars){
+
+  UM = vars[1]
+  COMPLICACION = vars[2]
+  COMORBILIDADES = vars[3]
+  LABORATORIO = vars[4]
+  SOCIO_CULT_DEMO = vars[5]
+
+
   datos_covid <-datos_covid %>% mutate(
     FECHA_INGRESO = as.Date(FECHA_INGRESO, format = "%Y-%m-%d"),
     FECHA_ACTUALIZACION = as.Date(FECHA_ACTUALIZACION, format = "%Y-%m-%d"),
@@ -267,6 +275,51 @@ recodifica_variables <- function(datos_covid, poblaciones){
                                  "5" = "NO REALIZADO POR LABORATORIO",
                                  "6" = "SOSPECHOSO",
                                  "7" = "NEGATIVO A SARS-COV-2") )
+
+
+  if(COMORBILIDADES == T){
+    datos_covid <- datos_covid %>%
+      mutate( EMBARAZO = funcion_recodificar_si_no(EMBARAZO),
+
+              DIABETES = funcion_recodificar_si_no(DIABETES),
+
+              EPOC = funcion_recodificar_si_no(EPOC),
+
+              ASMA = funcion_recodificar_si_no(ASMA),
+
+              INMUSUPR = funcion_recodificar_si_no(INMUSUPR),
+
+              HIPERTENSION = funcion_recodificar_si_no(HIPERTENSION),
+
+              OTRA_COM = funcion_recodificar_si_no(OTRA_COM),
+
+              CARDIOVASCULAR = funcion_recodificar_si_no(CARDIOVASCULAR),
+
+              OBESIDAD = funcion_recodificar_si_no(OBESIDAD),
+
+              TABAQUISMO = funcion_recodificar_si_no(TABAQUISMO),
+
+              RENAL_CRONICA = funcion_recodificar_si_no(RENAL_CRONICA),
+
+              OTRO_CASO = funcion_recodificar_si_no(OTRO_CASO))
+
+  }
+
+
+  if(COMPLICACION == T){
+    datos_covid <- datos_covid %>%
+      mutate( TIPO_PACIENTE = recode(TIPO_PACIENTE,
+                                     "1" = "AMBULATORIO",
+                                     "2" = "HOSPITALIZADO",
+                                     "99" = "NO ESPECIFICADO"),
+
+              INTUBADO = funcion_recodificar_si_no(INTUBADO),
+
+              NEUMONIA = funcion_recodificar_si_no(NEUMONIA),
+
+              UCI = funcion_recodificar_si_no(UCI))
+
+  }
 
   if(poblaciones == 1){
 
