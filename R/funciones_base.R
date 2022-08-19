@@ -321,6 +321,35 @@ recodifica_variables <- function(datos_covid, poblaciones, vars){
 
   }
 
+  if(LABORATORIO == T){
+    datos_covid <- datos_covid %>%
+      mutate( TOMA_MUESTRA_ANTIGENO = funcion_recodificar_si_no(TOMA_MUESTRA_ANTIGENO),
+
+              TOMA_MUESTRA_LAB = funcion_recodificar_si_no(TOMA_MUESTRA_LAB),
+
+              RESULTADO_LAB = funcion_recodificar_resultado(RESULTADO_LAB),
+
+              RESULTADO_ANTIGENO = funcion_recodificar_resultado(RESULTADO_ANTIGENO))
+  }
+
+  if(SOCIO_CULT_DEMO == T){
+    datos_covid <- datos_covid %>%
+      mutate( NACIONALIDAD = recode(NACIONALIDAD,
+                                    "1" = "MEXICANA",
+                                    "2" = "EXTRANJERA",
+                                    "99" = "NO ESPECIFICADO"),
+
+              INDIGENA = funcion_recodificar_si_no(INDIGENA),
+
+              MIGRANTE = funcion_recodificar_si_no(MIGRANTE),
+
+              HABLA_LENGUA_INDIG = funcion_recodificar_si_no(HABLA_LENGUA_INDIG))
+
+
+    #"PAIS_NACIONALIDAD",
+    #"PAIS_ORIGEN",
+  }
+
   if(poblaciones == 1){
 
     poblaciones <-read.csv("https://raw.githubusercontent.com/AllanZamb/DatosAbiertosCOVID19/main/poblaciones/Poblaciones_INE_Muni.csv", encoding = "UTF-8")
