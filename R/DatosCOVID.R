@@ -87,7 +87,11 @@ DatosCOVID19 <- function(RESULTADO_FINAL= T,
   pacman::p_load(readxl,tidyverse , RCurl,data.table)
   #source("funciones_base.R")
 
-  datos_covid <- fread("curl http://datosabiertos.salud.gob.mx/gobmx/salud/datos_abiertos/datos_abiertos_covid19.zip | funzip",select =variables ) %>%
+  # datos_covid <- fread("curl http://datosabiertos.salud.gob.mx/gobmx/salud/datos_abiertos/datos_abiertos_covid19.zip | funzip",select =variables ) %>%
+  #   recodifica_variables(., poblaciones)
+
+  datos_covid <- data.table::fread(descargar_datos_abiertos(),
+                                   select =variables ) %>%
     recodifica_variables(., poblaciones)
 
 

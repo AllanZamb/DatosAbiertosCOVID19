@@ -3,21 +3,26 @@
 ################################################################################
 
 #FUNCION PRINCIPAL
-base_covid <-function(){
-  library(readxl)
-  library(tidyverse)
-  library(RCurl)
-  library(data.table)
-
-  source("funciones_base.R")
-  # datos_covid <- read.csv(descargar_datos_abiertos(),
-  #                         encoding = "UTF-8",
-  #                         stringsAsFactors = T ) %>%
-  datos_covid <- fread("curl http://datosabiertos.salud.gob.mx/gobmx/salud/datos_abiertos/datos_abiertos_covid19.zip | funzip") %>%
-    recodifica_variables (.) %>%
-    recodifica_poblaciones (.)
-  return(datos_covid)
-}
+# base_covid <-function(){
+#   library(readxl)
+#   library(tidyverse)
+#   library(RCurl)
+#   library(data.table)
+#
+#   source("funciones_base.R")
+#   # datos_covid <- read.csv(descargar_datos_abiertos(),
+#   #                         encoding = "UTF-8",
+#   #                         stringsAsFactors = F )
+#   # datos_covid <- data.table::fread(descargar_datos_abiertos(),
+#   #                         encoding = "UTF-8",
+#   #                         stringsAsFactors = F )
+#
+#
+#   # datos_covid <- fread("curl http://datosabiertos.salud.gob.mx/gobmx/salud/datos_abiertos/datos_abiertos_covid19.zip | funzip") %>%
+#   #   recodifica_variables (.)
+#     #recodifica_poblaciones (.)
+#   return(datos_covid)
+# }
 
 # FUNCION 1 : DESCARGA LA BASE DE DATOS ABIERTOS
 
