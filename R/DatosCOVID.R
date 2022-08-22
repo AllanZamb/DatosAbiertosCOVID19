@@ -8,7 +8,8 @@ DatosCOVID19 <- function(RESULTADO_FINAL= T,
                          COMORBILIDADES = F,
                          LABORATORIO = F,
                          SOCIO_CULT_DEMO = F,
-                         POBLACIONES = F
+                         POBLACIONES = F,
+                         ANIOS = c(2020:2022)
 ){
 
 
@@ -77,20 +78,24 @@ DatosCOVID19 <- function(RESULTADO_FINAL= T,
   COMPLICACION,
   COMORBILIDADES,
   LABORATORIO,
-  SOCIO_CULT_DEMO)
+  SOCIO_CULT_DEMO, ANIOS)
 
 
 
 
 
-  pacman::p_load(readxl,tidyverse , RCurl,data.table)
-  #source("funciones_base.R")
+  pacman::p_load(readxl,tidyverse , RCurl,data.table, magrittr)
 
   # datos_covid <- fread("curl http://datosabiertos.salud.gob.mx/gobmx/salud/datos_abiertos/datos_abiertos_covid19.zip | funzip",select =variables ) %>%
   #   recodifica_variables(., poblaciones)
 
-  datos_covid <- data.table::fread(descargar_datos_abiertos(),
-                                   select =variables ) %>%
+  # datos_covid <- data.table::fread(descargar_datos_abiertos(),
+  #                                  select =variables ) %>%
+  #   recodifica_variables(., poblaciones, vars)
+
+  datos_covid <- lapply(descargar_datos_abiertos(),
+                        fread, select = variables ) %>%
+    rbindlist(.) %>%
     recodifica_variables(., poblaciones, vars)
 
 
