@@ -104,12 +104,12 @@ descargar_datos_abiertos <- function(){
 
 
 
-      return( c(datos_abiertos_2020,datos_abiertos_2021, actual_f))
+      #return( c(datos_abiertos_2020,datos_abiertos_2021, actual_f))
 
     }else if (rdl %in% c("n","N","no", "NO")){
       #No, sólo carga la base que ya está descargada
       print("Cargando base...")
-      return(paste0("datos_abiertos/" , unique(list.files("datos_abiertos/", pattern = ".csv"))))
+      #return(paste0("datos_abiertos/" , unique(list.files("datos_abiertos/", pattern = ".csv"))))
     }
 
   }else{
@@ -170,7 +170,7 @@ descargar_datos_abiertos <- function(){
                      ".csv")
     file.rename(datos_abiertos_act, actual_f)
 
-    return( c(datos_abiertos_2020,datos_abiertos_2021, actual_f))
+    #return( c(datos_abiertos_2020,datos_abiertos_2021, actual_f))
 
   }
 
