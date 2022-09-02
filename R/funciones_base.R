@@ -42,7 +42,7 @@ descargar_datos_abiertos <- function(){
 
   if ((file.exists("datos_abiertos/COVID19MEXICO2020.csv") |
        file.exists("datos_abiertos/COVID19MEXICO2021.csv")|
-       file.exists("datos_abiertos/COVID19MEXICO2022.csv")) |
+       file.exists("datos_abiertos/COVID19MEXICO2022.csv")) &
       Sys.Date() == as.Date(file.info("datos_abiertos/COVID19MEXICO2022.csv")$atime)){
     print("Ya tenemos la base de hoy, ¿Volvemos a descargar? S/N")
     rdl<-readline()
