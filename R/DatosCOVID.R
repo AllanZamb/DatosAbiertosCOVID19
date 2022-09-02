@@ -93,11 +93,12 @@ DatosCOVID19 <- function(RESULTADO_FINAL= T,
   #                                  select =variables ) %>%
   #   recodifica_variables(., poblaciones, vars)
 
-
-  descargar_datos_abiertos()
-
-  datos_covid <- lapply(paste0("datos_abiertos/" , unique(list.files("datos_abiertos/", pattern = ".csv"))),
-                        fread, select = variables ) %>%
+#
+#   descargar_datos_abiertos()
+#
+#   datos_covid <- lapply(paste0("datos_abiertos/" , unique(list.files("datos_abiertos/", pattern = ".csv"))),
+#                         fread, select = variables ) %>%
+  datos_covid <- fread(descargar_datos_abiertos(), select = variables ) %>%
     rbindlist(.) %>%
     recodifica_variables(., poblaciones, vars)
 

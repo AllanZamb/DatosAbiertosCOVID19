@@ -40,7 +40,10 @@ descargar_datos_abiertos <- function(){
   }
 
 
-  if (file.exists("datos_abiertos/COVID19MEXICO2022.csv") & Sys.Date() == as.Date(file.info("datos_abiertos/COVID19MEXICO2022.csv")$atime)){
+  if ((file.exists("datos_abiertos/COVID19MEXICO2020.csv") |
+       file.exists("datos_abiertos/COVID19MEXICO2021.csv")|
+       file.exists("datos_abiertos/COVID19MEXICO2022.csv")) |
+      Sys.Date() == as.Date(file.info("datos_abiertos/COVID19MEXICO2022.csv")$atime)){
     print("Ya tenemos la base de hoy, ¿Volvemos a descargar? S/N")
     rdl<-readline()
 
@@ -64,7 +67,7 @@ descargar_datos_abiertos <- function(){
       if (Sys.info()["sysname"] == "Windows"){
 
 
-        datos_abiertos_2022 <- unzip('datos_abiertos/datos_abiertos_covid19_2022.zip',
+        datos_abiertos_act <- unzip('datos_abiertos/datos_abiertos_covid19_2022.zip',
                                 exdir = "datos_abiertos",
                                 overwrite = TRUE)
         datos_abiertos_2020 <- unzip('datos_abiertos/datos_abiertos_covid19_2020.zip',
@@ -79,7 +82,6 @@ descargar_datos_abiertos <- function(){
         #Descomprimimos la carpeta
         datos_abiertos_act <- unzip('datos_abiertos/datos_abiertos_covid19_2022.zip',
                                 exdir = "datos_abiertos/", overwrite = TRUE)
-
 
         datos_abiertos_2020 <- unzip('datos_abiertos/datos_abiertos_covid19_2020.zip',
                                 exdir = "datos_abiertos/",
@@ -109,13 +111,15 @@ descargar_datos_abiertos <- function(){
     }else if (rdl %in% c("n","N","no", "NO")){
       #No, sólo carga la base que ya está descargada
       print("Cargando base...")
-      #return(paste0("datos_abiertos/" , unique(list.files("datos_abiertos/", pattern = ".csv"))))
+      return(paste0("datos_abiertos/" , unique(list.files("datos_abiertos/", pattern = ".csv"))))
     }
 
   }else{
 
+    print("No tenemos la base actualizada o alguna base está desactualizada o inexistente...")
     #No la tenemos, y descargamos los datos abiertos
     print("Desargando base...")
+
     download.file(url ="http://datosabiertos.salud.gob.mx/gobmx/salud/datos_abiertos/datos_abiertos_covid19.zip",
                   destfile='datos_abiertos/datos_abiertos_covid19_2022.zip',
                   method='libcurl')
@@ -128,11 +132,13 @@ descargar_datos_abiertos <- function(){
                   destfile='datos_abiertos/datos_abiertos_covid19_2021.zip',
                   method='libcurl')
 
+
+
     #Descomprimimos la carpeta
     if (Sys.info()["sysname"] == "Windows"){
 
 
-      datos_abiertos_2022 <- unzip('datos_abiertos/datos_abiertos_covid19_2022.zip',
+      datos_abiertos_act <- unzip('datos_abiertos/datos_abiertos_covid19_2022.zip',
                                    exdir = "datos_abiertos",
                                    overwrite = TRUE)
       datos_abiertos_2020 <- unzip('datos_abiertos/datos_abiertos_covid19_2020.zip',
@@ -170,7 +176,7 @@ descargar_datos_abiertos <- function(){
                      ".csv")
     file.rename(datos_abiertos_act, actual_f)
 
-    #return( c(datos_abiertos_2020,datos_abiertos_2021, actual_f))
+    return( c(datos_abiertos_2020,datos_abiertos_2021, actual_f))
 
   }
 
